@@ -1,13 +1,14 @@
-﻿using System.Collections;
+﻿#nullable enable
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace TSKT
 {
-    public class TimeScaler
+    public class TimeScaler : System.IDisposable
     {
-        static Dictionary<int, float> scales;
-        static Dictionary<int, float> Scales => scales ?? (scales = new Dictionary<int, float>());
+        static Dictionary<int, float>? scales;
+        static Dictionary<int, float> Scales => scales ??= new Dictionary<int, float>();
 
         static int nextId = 1;
         readonly int id;
@@ -22,7 +23,10 @@ namespace TSKT
         {
             if (t == 1f)
             {
-                Scales.Remove(id);
+                if (!Scales.Remove(id))
+                {
+                    return;
+                }
             }
             else
             {
@@ -30,6 +34,11 @@ namespace TSKT
             }
 
             Time.timeScale = TotalScale;
+        }
+
+        public void Dispose()
+        {
+            SetScale(1f);
         }
 
         float TotalScale
