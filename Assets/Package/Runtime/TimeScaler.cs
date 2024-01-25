@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace TSKT
 {
-    public class TimeScaler : System.IDisposable
+    public readonly struct TimeScaler : System.IDisposable
     {
         static Dictionary<int, float>? scales;
         static Dictionary<int, float> Scales => scales ??= new Dictionary<int, float>();
@@ -13,10 +13,24 @@ namespace TSKT
         static int nextId = 1;
         readonly int id;
 
-        public TimeScaler()
+        TimeScaler(int id)
         {
-            id = nextId;
+            this.id = id;
+        }
+
+        public static TimeScaler Create()
+        {
+            var result = new TimeScaler(nextId);
             ++nextId;
+
+            return result;
+        }
+
+        public static TimeScaler Create(float value)
+        {
+            var result = Create();
+            result.SetScale(value);
+            return result;
         }
 
         public void SetScale(float t)
@@ -50,7 +64,7 @@ namespace TSKT
                     return 1f;
                 }
                 float t = 1f;
-                foreach (var it in Scales)
+                foreach (var it in scales)
                 {
                     t *= it.Value;
                 }
