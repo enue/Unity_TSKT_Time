@@ -50,6 +50,23 @@ namespace TSKT
             Time.timeScale = TotalScale;
         }
 
+        public float Value
+        {
+            get
+            {
+                if (scales ==  null)
+                {
+                    return 1f;
+                }
+                if (scales.TryGetValue(id, out var value))
+                {
+                    return value;
+                }
+                return 1f;
+            }
+            set => SetScale(value);
+        }
+
         public void Dispose()
         {
             SetScale(1f);
